@@ -1,0 +1,37 @@
+<?php
+$sucesso = "";
+$servidor = "localhost";
+$username = "root";
+$senha = "";
+$database = "faeterj3daw";
+$conn = new mysqli($servidor, $username, $senha, $database);
+if ($conn->connect_error) {
+    die("Conexao Falhou, avise o administrador do sistema");
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    $id = $_GET["id"];
+
+    $comandoSQL = "SELECT * FROM `clientes` where id = $id";
+    $resultado = $conn->query($comandoSQL);
+    $linha = $resultado->fetch_assoc();
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<h1>Alterar Qual Cliente</h1>
+<br>
+<a href="AV1_IncluirCliente.php">Inserir Cliente</a><br>
+<a href="AV1_alterarQualCliente.php">Alterar Cliente</a><br>
+<a href="AV1_listarCliente.php">Listar Cliente</a><br>
+<br>
+<form action="alterarQualCliente.html" method="GET">
+    Qual Cliente será alterado?
+    <input type="id" name="id">
+    <input type="submit" value="alterar">
+</form>
+</body>
+</html>
