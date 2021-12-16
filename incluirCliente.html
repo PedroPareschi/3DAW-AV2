@@ -1,0 +1,136 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Incluir Cliente</title>
+    <script>
+        function PostalCodeValido(postalCode) {
+            let pattern = /[0-9]+/;
+            return pattern.test(postalCode);
+        }
+        function CPFValido(cpf){
+            let pattern = /^\d{11}$/;
+            return pattern.test(cpf);
+        }
+        function PassaporteValido(passaporte){
+            let pattern = /^[a-zA-Z]{2}\d{6}$/;
+            return pattern.test(passaporte);
+        }
+
+        function EmailValido(email){
+            let pattern = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+            return pattern.test(email);
+        }
+
+        function FormValido(nome, endereco, postalCode, pais, cpf, passaporte, email) {
+            let msg = "";
+            if (nome == "") {
+                msg = "Nome não pode ser vazio. <br>";
+            }
+            if (endereco == "") {
+                msg = "Endereco não pode ser vazio. <br>";
+            }
+            if (!PostalCodeValido(postalCode)) {
+                msg = "Codigo postal deve ser numérico. <br>";
+            }
+            if (pais == "") {
+                msg = "País não pode ser vazio. <br>";
+            }
+            if (!CPFValido(cpf)) {
+                msg = "CPF deve ser um numero de 11 digitos, sem pontuacao <br>";
+            }
+            if (!PassaporteValido(passaporte)) {
+                msg = "Passaporte deve ser duas letras seguidos de 6 numeros <br>";
+            }
+            if(!EmailValido(email)){
+                msg = "Email invalido <br>";
+            }   
+            return msg;
+        }
+        function ValidarForm() {
+            let objForm = document.getElementById("cadCliente");
+            console.log("objForm: " + objForm.innerHTML);
+            let strNome = document.getElementById("nome").value;
+            let strEndereco = document.getElementById("endereco").value;
+            let strPostalCode = document.getElementById("postalCode").value;
+            let strPais = document.getElementById("pais").value;
+            let strCPF = document.getElementById("cpf").value;
+            let strPassaporte = document.getElementById("passaporte").value;
+            let strEmail = document.getElementById("email").value;
+            let strDataNascimento = document.getElementById("dataNascimento").value;
+            let mensagem = FormValido(strNome, strEndereco, strPostalCode, strPais, strCPF, strPassaporte, strEmail);
+            let objForm2 = {"Nome":strNome, "Endereco":strEndereco, "Postal Code":strPostalCode, "País":strPais, "CPF": strCPF, "Passaporte":strPassaporte, "Email": strEmail, "Data de Nascimento": strDataNascimento};
+            let objJSON = JSON.stringify(objForm);
+            console.log("JSON: " + objJSON);
+            if (mensagem == "") {
+                console.log("Passou na validação");
+                EnviarForm(strNome, strEndereco, strPostalCode, strPais, strCPF, strPassaporte, strEmail, strDataNascimento);
+            } else {
+                document.getElementById("msg").innerHTML = mensagem;
+            }
+        }
+        function EnviarForm(strNome, strEndereco, strPostalCode, strPais, strCPF, strPassaporte, strEmail, strDataNascimento) {
+            let xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Chegou resposta: " + this.responseText);
+                    document.getElementById("msg").innerHTML = this.responseText;
+                    let objReturnJSON = JSON.parse(this.responseText);
+                    document.getElementById("retNome").innerHTML = objReturnJSON.Nome;
+                    document.getElementById("retEndereco").innerHTML = objReturnJSON.Endereco;
+                    document.getElementById("retPostalCode").innerHTML = objReturnJSON.PostalCode;
+                    document.getElementById("retCPF").innerHTML = objReturnJSON.CPF;
+                    document.getElementById("retPassaporte").innerHTML = objReturnJSON.Passaporte;
+                    document.getElementById("retEmail").innerHTML = objReturnJSON.Email;
+                    document.getElementById("retDataNascimento").innerHTML = objReturnJSON.DataNascimento;
+                }
+            }
+            xmlHttp.open("GET","http://localhost/clientes/incluirCliente.php?Nome=" + strNome +
+                          "&Endereco=" + strEndereco +
+                          "&PostalCode=" + strPostalCode +
+                          "&Pais=" + pais +
+                          "&CPF=" + strCPF +
+                          "&Passaporte=" + strPassaporte +
+                          "&Email=" + strEmail +
+                          "&DataNascimento=" + strDataNascimento
+                          );
+            xmlHttp.send();
+            console.log("Enviei requisição");
+        }
+    </script>
+</head>
+<body>
+<h1>Inserir Cliente</h1>
+<br>
+<a href="incluirCliente.html">Inserir Cliente</a><br>
+<a href="alterarQualCliente.html">Alterar Cliente</a><br>
+<a href="listarClientes.html">Listar Clientes</a><br>
+<br>
+<form action="" method=GET id="cadCliente">
+    Nome: <input type=text name="nome" id="nome"> <br>
+    Endereço: <input type=text name="endereco" id="endereco"> <br>
+    Código Postal: <input type=number name="postalCode" id="postalCode"> <br>
+    País: <input type=text name="pais" id="pais"> <br>
+    CPF: <input type=text name="cpf" id="cpf"> <br>
+    Passaporte: <input type=text name="passaporte" id="passaporte"> <br>
+    Email: <input type=email name="email" id="email"> <br>
+    Data de nascimento: <input type=date name="dataNascimento" id="dataNascimento"> <br>
+    <br><br>
+    <input type="button" value="Inserir" onclick="ValidarForm()">
+</form>
+<br>
+<p id="msg"></p>
+<p id="retNome"></p>
+<p id="retEndereco"></p>
+<p id="retPostalCode"></p>
+<p id="retPais"></p>
+<p id="retCPF"></p>
+<p id="retPassaporte"></p>
+<p id="retEmail"></p>
+<p id="retDataNascimento"></p>
+</body>
+</html>

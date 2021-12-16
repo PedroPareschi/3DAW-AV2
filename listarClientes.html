@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Listar</title>
+    <script>
+        function buscarClientes() {
+            let xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Chegou resposta: " + this.responseText);
+                    document.getElementById("msg").innerHTML = this.responseText;
+                    let objReturnJSON = JSON.parse(this.responseText);
+                    for (i=0; i < objReturnJSON.length; i++) {
+                        let linha = objReturnJSON[i];
+
+                        criarLinhaTabela(objReturnJSON[i]);
+                    }
+                }
+            }
+            xmlHttp.open("GET","http://localhost/clientes/listarClientes.php");
+            xmlHttp.send();
+            console.log("Enviei requisição");
+        }
+        function criarLinhaTabela(pobjReturnJSON) {
+            let tr = document.createElement("tr"); 
+            let td = document.createElement("td"); 
+            let textnode = document.createTextNode(pobjReturnJSON.id);
+            td.appendChild(textnode); 
+            tr.appendChild(td); 
+
+            textnode = document.createTextNode(pobjReturnJSON.nome);
+            td.appendChild(textnode); 
+            tr.appendChild(td); 
+
+            textnode = document.createTextNode(pobjReturnJSON.endereco);
+            td.appendChild(textnode); 
+            tr.appendChild(td); 
+
+            textnode = document.createTextNode(pobjReturnJSON.postalCode);
+            td.appendChild(textnode); 
+            tr.appendChild(td); 
+
+            textnode = document.createTextNode(pobjReturnJSON.pais);
+            td.appendChild(textnode); 
+            tr.appendChild(td); 
+
+            textnode = document.createTextNode(pobjReturnJSON.cpf);
+            td.appendChild(textnode); 
+            tr.appendChild(td); 
+
+            textnode = document.createTextNode(pobjReturnJSON.passaporte);
+            td.appendChild(textnode); 
+            tr.appendChild(td); 
+
+            textnode = document.createTextNode(pobjReturnJSON.email);
+            td.appendChild(textnode); 
+            tr.appendChild(td); 
+
+            textnode = document.createTextNode(pobjReturnJSON.dataNascimento);
+            td.appendChild(textnode); 
+            tr.appendChild(td); 
+
+            var tr_fim = document.getElementById("ultimaLinha"); 
+            tr_fim.parentNode.insertBefore(tr, tr_fim);
+        }
+    </script>
+</head>
+<body>
+<h1>Inserir Cliente</h1>
+<br>
+<a href="incluirCliente.html">Inserir Cliente</a><br>
+<a href="alterarQualCliente.html">Alterar Cliente</a><br>
+<a href="listarClientes.html">Listar Clientes</a><br>
+<br>
+<input type="button" value="ListarClientes" onclick="buscarClientes()">
+<p id="msg"></p>
+<div id="lista"></div>
+<table id="lst">
+    <tr id="ultimaLinha">
+        <td colspan="8"></td>
+    </tr>
+</table>
+</body>
+</html>
